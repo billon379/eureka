@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fun.billon</groupId>
+    <artifactId>eureka</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>eureka</name>
+    <url>http://maven.apache.org</url>
+
+    <!-- 必须继承根项目(root),由根项目对第三方依赖的版本进行统一管理-->
+    <parent>
+        <groupId>fun.billon</groupId>
+        <artifactId>root</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <!-- 依赖项,由根项目(root)管理依赖版本,子项目不需要写依赖的版本号-->
+    <dependencies>
+        <!-- spring-boot-starter-test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- spring-cloud-starter-netflix-eureka-client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!-- spring-cloud-starter-netflix-eureka-server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 编译项 -->
+    <build>
+        <finalName>eureka</finalName>
+        <plugins>
+            <!-- spring-boot-maven-plugin,springboot打包插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- docker-maven-plugin,docker插件 -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 镜像名称 -->
+                    <imageName>${docker.repository.aliyun}/${project.artifactId}:${project.version}</imageName>
+                    <!-- Dockerfile文件地址 -->
+                    <dockerDirectory>${basedir}/src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <!-- ${project.build.directory},项目构建输出目录，默认为target/ -->
+                            <directory>${project.build.directory}</directory>
+                            <!-- ${project.build.directory},打包出来的jar名称 -->
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
